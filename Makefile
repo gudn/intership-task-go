@@ -1,7 +1,7 @@
 .PHONY: run clean build_sensor_image build_aggreg_image images
 
 run: images
-	docker-compose up -d
+	docker-compose up -d --force-recreate
 
 build_sensor_image:
 	docker build . -f Dockerfile.sensor -t youla_dev_internship_task_go_sensor:latest
