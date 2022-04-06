@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	intership_task_go "github.com/gudn/intership-task-go"
@@ -43,7 +44,9 @@ func parseConfig(fname string) error {
 }
 
 func acceptsJson(r *http.Request) bool {
-	return false
+	value := r.Header.Get("Accept")
+	return strings.Contains(value, "*/*") ||
+		strings.Contains(value, "application/json")
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
