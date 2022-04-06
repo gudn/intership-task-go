@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"log"
 	"net"
 	"net/http"
 
 	intership_task_go "github.com/gudn/intership-task-go"
 	"github.com/gudn/intership-task-go/internal/config"
+	_ "github.com/gudn/intership-task-go/internal/logger"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -17,8 +18,10 @@ func main() {
 	http.HandleFunc("/", intership_task_go.Handler)
 	listen, err := net.Listen("tcp", config.C.Bind)
 	if err != nil {
-		log.Fatalln("error listen:", err)
+		log.Fatal().Err(err).Msg("error listening")
 	}
-	log.Print("listening on ", listen.Addr().String())
-	log.Fatalln(http.Serve(listen, nil))
+	log.Info().Str("bind", listen.Addr().String()).Msg("started listening")
+	if err := http.Serve(listen, nil); err != nil {
+		log.Fatal().Err(err).Msg("listening failed")
+	}
 }

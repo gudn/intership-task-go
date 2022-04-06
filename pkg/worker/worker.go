@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"sync/atomic"
 	"time"
 
 	"github.com/gudn/intership-task-go/pkg/value"
+	"github.com/rs/zerolog/log"
 )
 
 func fetchValue(req *http.Request) (int32, error) {
@@ -44,6 +44,8 @@ func Start(
 	req = req.WithContext(ctx)
 	tick := time.NewTicker(interval)
 	defer tick.Stop()
+	defer log.Info().Str("url", url).Msg("terminated")
+	log.Info().Str("url", url).Msg("initialized")
 	for {
 		select {
 		case <-ctx.Done():
@@ -64,7 +66,7 @@ func Start(
 				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 					return err
 				} else {
-					log.Printf("error worker(url = %q): %v", url, err)
+					log.Error().Err(err).Str("url", url).Msg("fetching failed")
 				}
 			} else {
 				atomic.AddInt32(value.Sum, val-lastValue)
@@ -73,7 +75,7 @@ func Start(
 					atomic.AddInt32(value.BrokenCount, -1)
 				}
 				lastValue = val
-				log.Printf("worker(url = %q) received value", url)
+				log.Info().Str("url", url).Msg("received value")
 			}
 		}
 	}

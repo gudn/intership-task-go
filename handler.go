@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gudn/intership-task-go/internal/config"
 	"github.com/gudn/intership-task-go/pkg/value"
 	"github.com/gudn/intership-task-go/pkg/worker"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -45,14 +46,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		_, err = fmt.Fprint(w, avg)
 	}
 	if err != nil {
-		log.Print("error handler:", err)
+		log.Error().Err(err).Msg("handler error")
 	}
 }
 
 func Setup(ctx context.Context) {
 	n := len(config.C.SensorUrls)
 	if n < 1 {
-		log.Fatalln("error config: sensors count is too few")
+		log.Panic().Msg("no configured sensors")
 	}
 	val = value.New(n)
 	for _, url := range config.C.SensorUrls {
