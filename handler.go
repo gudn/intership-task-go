@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 
@@ -28,6 +29,9 @@ func acceptsJson(r *http.Request) bool {
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	avg, broken := val.Average()
+	if math.IsNaN(avg) {
+		avg = 0
+	}
 	if broken {
 		w.Header().Add(BrokenHeader, "true")
 	}
