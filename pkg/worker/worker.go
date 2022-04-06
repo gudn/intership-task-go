@@ -46,6 +46,36 @@ func Start(
 	defer tick.Stop()
 	defer log.Info().Str("url", url).Msg("terminated")
 	log.Info().Str("url", url).Msg("initialized")
+
+	update := func() error {
+		val, err := fetchValue(req)
+		if err != nil {
+			if !broken {
+				atomic.AddInt32(value.BrokenCount, 1)
+				atomic.AddInt32(value.Sum, -lastValue)
+				lastValue = 0
+				broken = true
+			}
+			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return err
+			} else {
+				log.Warn().Err(err).Str("url", url).Msg("fetching failed")
+			}
+		} else {
+			atomic.AddInt32(value.Sum, val-lastValue)
+			if broken {
+				broken = false
+				atomic.AddInt32(value.BrokenCount, -1)
+			}
+			lastValue = val
+			log.Info().Str("url", url).Msg("received value")
+		}
+		return nil
+	}
+
+	if err := update(); err != nil {
+		return err
+	}
 	for {
 		select {
 		case <-ctx.Done():
@@ -55,27 +85,8 @@ func Start(
 			atomic.AddInt32(value.Sum, -lastValue)
 			return ctx.Err()
 		case <-tick.C:
-			val, err := fetchValue(req)
-			if err != nil {
-				if !broken {
-					atomic.AddInt32(value.BrokenCount, 1)
-					atomic.AddInt32(value.Sum, -lastValue)
-					lastValue = 0
-					broken = true
-				}
-				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-					return err
-				} else {
-					log.Warn().Err(err).Str("url", url).Msg("fetching failed")
-				}
-			} else {
-				atomic.AddInt32(value.Sum, val-lastValue)
-				if broken {
-					broken = false
-					atomic.AddInt32(value.BrokenCount, -1)
-				}
-				lastValue = val
-				log.Info().Str("url", url).Msg("received value")
+			if err := update(); err != nil {
+				return err
 			}
 		}
 	}
