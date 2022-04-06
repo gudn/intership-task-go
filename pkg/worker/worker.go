@@ -55,13 +55,16 @@ func Start(
 		case <-tick.C:
 			val, err := fetchValue(req)
 			if err != nil {
-				atomic.AddInt32(value.BrokenCount, 1)
-				atomic.AddInt32(value.Sum, -lastValue)
-				lastValue = 0
+				if !broken {
+					atomic.AddInt32(value.BrokenCount, 1)
+					atomic.AddInt32(value.Sum, -lastValue)
+					lastValue = 0
+					broken = true
+				}
 				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 					return err
 				} else {
-					log.Printf("ERR worker (url = %q): %v", url, err)
+					log.Printf("error worker(url = %q): %v", url, err)
 				}
 			} else {
 				atomic.AddInt32(value.Sum, val-lastValue)
@@ -70,6 +73,7 @@ func Start(
 					atomic.AddInt32(value.BrokenCount, -1)
 				}
 				lastValue = val
+				log.Printf("worker(url = %q) received value", url)
 			}
 		}
 	}
