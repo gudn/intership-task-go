@@ -1,4 +1,4 @@
-package intership_task_go
+package value
 
 import (
 	"sync/atomic"
@@ -21,7 +21,7 @@ func (v *Value) Average() (avg float64, broken bool) {
 	return
 }
 
-func NewValue(count int) *Value {
+func New(count int) *Value {
 	sum := int32(0)
 	brokenCount := int32(0)
 	return &Value{&sum, &brokenCount, float64(count)}

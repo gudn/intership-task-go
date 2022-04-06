@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	intership_task_go "github.com/gudn/intership-task-go"
+	"github.com/gudn/intership-task-go/pkg/value"
 )
 
 func fetchValue(req *http.Request) (int32, error) {
@@ -31,7 +31,7 @@ func fetchValue(req *http.Request) (int32, error) {
 
 func Start(
 	ctx context.Context,
-	value *intership_task_go.Value,
+	value *value.Value,
 	interval time.Duration,
 	url string,
 ) error {
