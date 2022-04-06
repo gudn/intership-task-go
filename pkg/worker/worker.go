@@ -66,7 +66,7 @@ func Start(
 				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 					return err
 				} else {
-					log.Error().Err(err).Str("url", url).Msg("fetching failed")
+					log.Warn().Err(err).Str("url", url).Msg("fetching failed")
 				}
 			} else {
 				atomic.AddInt32(value.Sum, val-lastValue)
