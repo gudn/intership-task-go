@@ -1,0 +1,10 @@
+{
+  "sensor_urls": [
+    "http://localhost:8081",
+    "http://localhost:8082",
+    "http://localhost:8083",
+    "http://localhost:8084"
+  ],
+  "bind": ":8080",
+  "interval": "5s"
+}
