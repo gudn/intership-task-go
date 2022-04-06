@@ -29,7 +29,7 @@ func fetchValue(req *http.Request) (int32, error) {
 	return int32(val), err
 }
 
-func StartWorker(
+func Start(
 	ctx context.Context,
 	value *intership_task_go.Value,
 	interval time.Duration,
