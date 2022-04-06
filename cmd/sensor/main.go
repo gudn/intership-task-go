@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -20,6 +21,7 @@ func main() {
 	go func() {
 		for {
 			val = uint8(rand.Intn(255))
+			log.Printf("value changed, new value is %v", val)
 			time.Sleep(time.Second * 30)
 		}
 	}()
@@ -31,11 +33,11 @@ func main() {
 
 		_, err := fmt.Fprintf(writer, "%d", val)
 		if err != nil {
-			fmt.Println(err)
+			log.Print("error", err)
 		}
 	}))
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 }
