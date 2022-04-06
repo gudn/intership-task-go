@@ -5,7 +5,7 @@
     "http://sensor3:8080",
     "http://sensor4:8080"
   ],
-  "sensor_timeout": "1s",
+  "sensor_timeout": "22s",
   "bind": ":8080",
-  "interval": "5s"
+  "interval": "30s"
 }
