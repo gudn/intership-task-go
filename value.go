@@ -1,6 +1,8 @@
 package intership_task_go
 
-import "sync/atomic"
+import (
+	"sync/atomic"
+)
 
 type Value struct {
 	// 255 * 10 = 2550 << 2**31
@@ -10,7 +12,7 @@ type Value struct {
 }
 
 func (v *Value) Average() (avg float64, broken bool) {
-	brokenCount := atomic.LoadInt32(v.Sum)
+	brokenCount := atomic.LoadInt32(v.BrokenCount)
 	sum := atomic.LoadInt32(v.Sum)
 	if brokenCount != 0 {
 		broken = true
@@ -19,7 +21,7 @@ func (v *Value) Average() (avg float64, broken bool) {
 	return
 }
 
-func NewValue(count uint32) *Value {
+func NewValue(count int) *Value {
 	sum := int32(0)
 	brokenCount := int32(0)
 	return &Value{&sum, &brokenCount, float64(count)}
