@@ -9,11 +9,13 @@ import (
 )
 
 type Config struct {
-	SensorUrls []string      `json:"sensor_urls"`
-	IntervalS  string        `json:"interval"`
-	Interval   time.Duration `json:"-"`
-	Bind       string        `json:"bind"`
-	Log        struct {
+	SensorUrls     []string      `json:"sensor_urls"`
+	SensorTimeoutS string        `json:"sensor_timeout"`
+	SensorTimeout  time.Duration `json:"-"`
+	IntervalS      string        `json:"interval"`
+	Interval       time.Duration `json:"-"`
+	Bind           string        `json:"bind"`
+	Log            struct {
 		Pretty bool   `json:"pretty"`
 		Level  string `json:"level"`
 	} `json:"log"`
@@ -30,10 +32,14 @@ func parseConfig(fname string) error {
 	if err != nil {
 		return err
 	}
-	C.Interval, err = time.ParseDuration(C.IntervalS)
 	if C.Log.Level == "" {
 		C.Log.Level = "info"
 	}
+	C.Interval, err = time.ParseDuration(C.IntervalS)
+	if err != nil {
+		return err
+	}
+	C.SensorTimeout, err = time.ParseDuration(C.SensorTimeoutS)
 	return err
 }
 

@@ -55,6 +55,7 @@ func Setup(ctx context.Context) {
 	if n < 1 {
 		log.Panic().Msg("no configured sensors")
 	}
+	http.DefaultClient.Timeout = config.C.SensorTimeout
 	val = value.New(n)
 	for _, url := range config.C.SensorUrls {
 		go worker.Start(ctx, val, config.C.Interval, url)
