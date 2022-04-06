@@ -31,7 +31,7 @@ func fetchValue(req *http.Request) (int32, error) {
 
 func StartWorker(
 	ctx context.Context,
-	value intership_task_go.Value,
+	value *intership_task_go.Value,
 	interval time.Duration,
 	url string,
 ) error {
