@@ -1,9 +1,9 @@
 {
   "sensor_urls": [
-    "http://localhost:8081",
-    "http://localhost:8082",
-    "http://localhost:8083",
-    "http://localhost:8084"
+    "http://sensor1:8080",
+    "http://sensor2:8080",
+    "http://sensor3:8080",
+    "http://sensor4:8080"
   ],
   "bind": ":8080",
   "interval": "5s"
